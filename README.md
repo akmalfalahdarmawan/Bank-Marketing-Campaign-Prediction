@@ -55,3 +55,5 @@ By targeting only the most likely subscribers:
    git clone https://github.com/akmalfalah/bank-marketing-ml.git
    cd bank-marketing-ml
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bank-marketing-campaign-prediction-jahbpghh88f8s4d7uzk5kg.streamlit.app/)
+
