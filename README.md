@@ -55,5 +55,6 @@ By targeting only the most likely subscribers:
 ## 📌 How to Run the Project
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/yourrepo.git
-   cd yourrepo
+   git clone https://github.com/akmalfalah/bank-marketing-ml.git
+   cd bank-marketing-ml
+
