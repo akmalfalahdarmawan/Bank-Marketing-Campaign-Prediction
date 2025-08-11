@@ -298,6 +298,21 @@ def main():
             help="Karena pernah dihubungi (pdays≥0), pilih hasil kampanye sebelumnya."
         )
 
+    # --- Business assumptions (profit calculator) ---
+    st.sidebar.markdown("### Business assumptions")
+    profit_per_sub = st.sidebar.number_input(
+        "Net profit per subscription (€)", value=120, min_value=0, step=10,
+        help="Profit bersih per nasabah yang berlangganan."
+    )
+    cost_per_contact = st.sidebar.number_input(
+        "Cost per contact (€)", value=3, min_value=0, step=1,
+        help="Biaya 1x menghubungi nasabah."
+    )
+    extra_contacts = st.sidebar.number_input(
+        "Planned extra contacts", value=1, min_value=1, step=1,
+        help="Rencana jumlah kontak berikutnya untuk lead ini."
+    )
+
     chart_mode = resolve_chart_mode(chart_theme_choice)
 
     # Precompute names & importances
@@ -325,8 +340,26 @@ def main():
                                     contact=contact, month=month, campaign=campaign, pdays=pdays, poutcome=poutcome))
     )
 
+    # ---- Profit math (available regardless of proba) ----
+    total_cost = float(cost_per_contact * extra_contacts)
+    if profit_per_sub <= 0:
+        breakeven_p = 1.0
+    else:
+        breakeven_p = float(np.clip(total_cost / profit_per_sub, 0.0, 1.0))
+    # decision threshold mixes business & default model cutoff
+    thr = max(0.35, breakeven_p)
+
     if proba is not None:
         st.metric("Subscription Probability", f"{proba:.2%}")
+        expected_profit = float(proba * profit_per_sub - total_cost)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Expected profit (this lead)", f"€{expected_profit:,.2f}")
+        c2.metric("Breakeven probability", f"{breakeven_p:.1%}")
+        c3.metric("Model score", f"{proba:.1%}")
+        if expected_profit >= 0:
+            st.success("✅ We recommend the marketing team reach out to this lead (economically profitable). (expected profit ≥ 0).")
+        else:
+            st.warning("⚠️ We recommend not reaching out to this lead (negative expected profit). (expected profit < 0).")
 
     # ======= Customer Input (top) =======
     st.subheader("Customer Input (details)")
@@ -345,11 +378,10 @@ def main():
         if proba is None:
             st.info("Click Predict to see the probability.")
         else:
-            thr = 0.35
             fig_b = draw_bullet(proba, thr)
             apply_chart_theme(fig_b, chart_mode)
             st.pyplot(fig_b, use_container_width=True)
-            st.caption(f"Decision threshold: {thr:.2f}")
+            st.caption(f"Decision threshold: {thr:.2f} (max of model 0.35 and breakeven)")
 
     with col_fi:
         st.subheader("Top Feature (Global)")
@@ -375,7 +407,6 @@ def main():
 
     # ======= Quick insight =======
     st.subheader("Quick Insight")
-    thr = 0.35
     if proba is None:
         st.write("- **No score yet.** Click Predict above.")
     else:
