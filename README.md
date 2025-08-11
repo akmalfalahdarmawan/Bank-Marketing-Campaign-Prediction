@@ -1,3 +1,4 @@
+![Bank Marketing Campaign Prediction](github_banner.png)
 # Optimizing Bank Marketing Campaigns with Machine Learning
 
 This project applies **Machine Learning** to improve the effectiveness of bank marketing campaigns, specifically in predicting whether a client will subscribe to a term deposit.
