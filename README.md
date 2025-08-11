@@ -1,5 +1,3 @@
-# Berdasarkan konteks dari markdown di notebook, kita akan buat ringkasan README.md yang natural dan tidak terlihat copas AI
-
 readme_content = """
 # Optimizing Bank Marketing Campaigns with Machine Learning
 
